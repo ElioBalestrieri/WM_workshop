@@ -9,7 +9,7 @@ clc
 
 % remind to add ptb path now otherwise some functions (CombVec) won't work
 % on windows
-addpath(genpath('/home/ebalestr/toolboxes/Psychtoolbox-3-Psychtoolbox-3-9b2e154/Psychtoolbox')) % add ptb -unnecessary in LAB -?-
+% addpath(genpath('/home/ebalestr/toolboxes/Psychtoolbox-3-Psychtoolbox-3-9b2e154/Psychtoolbox')) % add ptb -unnecessary in LAB -?-
 
 %% Get subject name
 % .. and test to be performed
