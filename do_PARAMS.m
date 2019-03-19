@@ -22,6 +22,7 @@ switch str_call
     
     case 'DMS'
         
+        % define load conditions
         P.exp.load_conds = [3 4 9];
         
         % stimulus durations -in seconds
@@ -37,8 +38,33 @@ switch str_call
         % define squares positions
         P = local_preallocate_squarepos(P);
         
+    case 'sternberg'
         
+        % define load conditions
+        P.exp.load_conds = [1 3 6];
         
+        % stimulus durations -in seconds
+        P.exp.digit_onscreen = 1.2;
+        P.exp.wait_for_probe = 2;
+        P.exp.warning_sig = .2;
+        
+        % stimuli font
+        P.exp.fontname = 'Courier New';
+        
+        % preallocate conditions
+        P = local_preallocate_conds(P);
+        
+        % preallocate digits 
+        P = local_preallocate_digits(P);
+        
+        % warning color fixation
+        P.colors.WARN = [0 200 0];
+        
+        % reset textsize to have bigger stimuli
+        P.textsize = 40;
+
+
+      
 end
 
 
@@ -52,7 +78,7 @@ end
 
 %% ######################### LOCAL FUNCTIONS ##############################
 
-% GENERAL FUNCTIONS
+% GENERAL FUNCTION
 function P = local_preallocate_conds(P)
 % assuming that the condition to be preallocated will generally be the same
 % regardless of the experiment to be performed: some memory load, and an
@@ -111,3 +137,29 @@ end
 
 end
 
+% sternberg-specific
+function P = local_preallocate_digits(P)
+
+P.cell_digit_stims = cell(P.tot_trl, 2); % first column: vector of digits; second column: probe stimuli (scalar)
+source_digit = 1:9;
+
+for iTrial = 1:P.tot_trl
+    
+    digit_vect = randsample(source_digit, P.exp.pre_conds(iTrial,1));
+
+    P.cell_digit_stims{iTrial, 1} = digit_vect;
+
+    if P.exp.pre_conds(iTrial, 2) == 2
+
+        P.cell_digit_stims{iTrial, 2} = randsample(digit_vect, 1);
+        
+    else
+        
+        to_be_sorted = source_digit(not(ismember(source_digit, digit_vect)));
+        P.cell_digit_stims{iTrial, 2} = randsample(to_be_sorted, 1);
+
+    end
+end
+
+
+end
