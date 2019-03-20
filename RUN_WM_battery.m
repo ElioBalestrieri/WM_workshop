@@ -3,12 +3,14 @@
 % created by Elio Balestrieri for didactic purpose at WWU
 % started on 18-Mar-2019
 
-clear all
+clear all %#ok<CLALL>
 close all
 clc
 
 % remind to add ptb path now otherwise some functions (CombVec) won't work
-% on windows
+% on windows. The path will change accordingly to your datasystem. Remember
+% the differences between UNIX systems (which separate the foldrs with "/")
+% and Windows (where the segmentation of the file path is done with "\")
 % addpath(genpath('/home/ebalestr/toolboxes/Psychtoolbox-3-Psychtoolbox-3-9b2e154/Psychtoolbox')) % add ptb -unnecessary in LAB -?-
 
 %% Get subject name
@@ -28,12 +30,14 @@ str_exp = {'sternberg', 'DMS'};
 
 %% Let the subject choose -recursively- the experiment
 you_dont_give_an_appropriate_answer = true;
+
+% .. keep the while loop going until a response in the set of the allowed
+% responses is given
 while you_dont_give_an_appropriate_answer
     
     WHICH_exp = input(prompt_exp,'s');
     lgcl_cell = ismember(cell_possile_answ, lower(WHICH_exp));
     
-    % 
     if any(lgcl_cell)
         
         str_call = str_exp{lgcl_cell};

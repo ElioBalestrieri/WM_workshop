@@ -6,13 +6,13 @@ function P = do_PARAMS(SUBJ_name, str_call)
 
 % general
 P.subjID = SUBJ_name; % empty previous
-P.outsave = [SUBJ_name '_' str_call '_' datestr(now, 30)];
+P.outsave = [SUBJ_name '_' str_call '_' datestr(now, 30)]; % provide a timestamp so that the name of the file will always be different, avoiding unwanted overwriting
 P.expidentifier = str_call;
 P.n_rep_cond = 4; % number of repetition per condition
 P.textsize = 25;
 
 
-% background & other colors
+% background & other colors (in RGB values)
 P.colors.BCK = [128 128 128];
 P.colors.TXT = [10 10 10];
 P.colors.FIX = P.colors.TXT;
@@ -77,10 +77,20 @@ end
 
 
 %% ######################### LOCAL FUNCTIONS ##############################
+% local functions are a fast way to split any task in subcomponent. This
+% process has two advantages: on the one hand improves computing
+% performance; on the other, it improves readability of code, facilitating
+% debugging. Just try to use them as much as possible.
 
 % GENERAL FUNCTION
 function P = local_preallocate_conds(P)
-% assuming that the condition to be preallocated will generally be the same
+% preallocation here is meant to pre-assign the experimental conditions 
+% before the experiment starts. In this way at every trial the right
+% parameters (number of items, color of items, and so on, will be easily
+% determined
+%
+
+% The function is assuming that the condition to be preallocated will generally be the same
 % regardless of the experiment to be performed: some memory load, and an
 % equal distribution of trials conforming with the memory items or not
 
@@ -105,15 +115,27 @@ end
 function P = local_preallocate_squarepos(P)
 % preallocate square position and colors
 
-put_angle = linspace(0,2*pi,P.exp.load_conds(end)); 
-im_vect = exp(1i*put_angle);
+% The positions of the squares are defined by taking N angles and N
+% eccentricities and randomly sampling them.
+put_angle = linspace(0,2*pi,P.exp.load_conds(end)); % define angles
+im_vect = exp(1i*put_angle); % use complex numbers
 eccentricity = linspace(P.oneva, 6*P.oneva, P.exp.load_conds(end));
 
 % predefine colors
+% the definition of colors is now lazily done by creating all possible
+% combinations of 3 RGB values. Take into account that other parameters
+% should be considered, like: how much the colors are similar among each
+% other? Do they share the same luminance, and so on and so forth.
 P.exp.colpalette = CombVec([0 128 255], [0 128 255], [0 128 255]);
 P.exp.colpalette(:,sum(P.exp.colpalette==128)==3) = []; % null grey
 
 % preallocate nans
+% by "preallocation" is meant the pre-assigning a variable with
+% pre-defefined dimension before starting a loop which will update at any
+% iteration the entries of the matrix. This process hugely speeds up
+% computation, and even if it is trivial with such small matrices (~30
+% values), it is a good practice in data handling. Keep in mind when you
+% see that your scipt takes too long ;)
 P.exp.square_pos = nan(P.tot_trl, P.exp.load_conds(end), 2);
 P.exp.square_cols = nan(P.tot_trl, P.exp.load_conds(end)+1, 3);
 

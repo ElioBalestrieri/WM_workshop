@@ -6,34 +6,29 @@ dat = P.data;
 load_cond = unique(dat(:,1))';
 
 figure
-acc = 0; perf_vect = nan(numel(load_cond),1);
+acc = 0; [acc_vect, RT_vect] = deal(nan(numel(load_cond),1));
 for iCond = load_cond
     
     acc = acc+1;
     this_lgcl = dat(:,1) == iCond;
     
-    switch P.expidentifier
-        
-        case 'DMS' % collect accuracy for DMS
-            
-            perf_this = nanmean(dat(this_lgcl, 4));
-            lbly = 'Accuracy';
-            
-        case 'sternberg' % collect RT for sternberg
-            
-            perf_this = nanmean(dat(this_lgcl, 5));
-            lbly = 'RT';
-            
-    end
-    
-    perf_vect(acc) = perf_this;
+    acc_vect(acc) = nanmean(dat(this_lgcl, 4));
+   
+    RT_vect(acc) = nanmean(dat(this_lgcl, 5));
 
 end
-    
-bar(load_cond, perf_vect)
-title([P.expidentifier ' performance'])
+
+subplot(1,2,1)
+bar(load_cond, acc_vect)
+title([P.expidentifier ' -Accuracy'])
 xlabel('Memory load')
-ylabel(lbly)
+ylabel('Accuracy')
+
+subplot(1,2,2)
+bar(load_cond, RT_vect)
+title([P.expidentifier ' -Reaction Times'])
+xlabel('Memory load')
+ylabel('RT')
 
 end
 
